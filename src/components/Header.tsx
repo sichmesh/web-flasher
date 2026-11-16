@@ -8,6 +8,7 @@ import UaFlag from "@/components/ui/UaFlag";
 
 const WEBSITE_URL = "https://sichmesh.org";
 const DISCORD_URL = "https://discord.gg/zpVgjRxdQJ";
+const GITHUB_URL = "https://github.com/sichmesh";
 
 export default function Header() {
   const { t, lang, setLang } = useLang();
@@ -43,12 +44,23 @@ export default function Header() {
         </a>
 
         <div className="flex items-center gap-3 sm:gap-5">
-          <a
-            href={WEBSITE_URL}
-            className="hidden whitespace-nowrap font-mono text-xs uppercase tracking-[0.18em] text-dim transition-colors hover:text-gold sm:block"
-          >
-            {t.nav.website}
-          </a>
+          <nav className="hidden items-center gap-5 sm:flex">
+            {[
+              { href: WEBSITE_URL, label: t.nav.website },
+              { href: DISCORD_URL, label: t.nav.discord },
+              { href: GITHUB_URL, label: t.nav.github },
+            ].map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                target={l.href === WEBSITE_URL ? undefined : "_blank"}
+                rel="noopener noreferrer"
+                className="whitespace-nowrap font-mono text-xs uppercase tracking-[0.18em] text-dim transition-colors hover:text-gold"
+              >
+                {l.label} ↗
+              </a>
+            ))}
+          </nav>
 
           {/* Language switcher */}
           <div className="flex items-center rounded-full border border-line/70 bg-panel/40 p-0.5">
@@ -72,14 +84,6 @@ export default function Header() {
             ))}
           </div>
 
-          <a
-            href={DISCORD_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden whitespace-nowrap rounded-full bg-gold px-4 py-2 text-xs font-semibold text-bg shadow-gold transition-transform hover:scale-105 md:block"
-          >
-            {t.nav.cta}
-          </a>
         </div>
       </div>
     </motion.header>

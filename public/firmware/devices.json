@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": "sich-s3",
+    "name": "SICH S3",
+    "vendor": "BFU Electronics",
+    "chip": "esp32-s3",
+    "reference": true,
+    "image": "/devices/sich-s3.webp",
+    "specs": {
+      "en": "LoRa 433 + 868 · GPS · keyboard",
+      "ua": "LoRa 433 + 868 · GPS · клавіатура"
+    },
+    "releases": []
+  }
+]

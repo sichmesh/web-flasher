@@ -1,344 +1,220 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Header from "@/components/Header";
+import DevicePicker from "@/components/DevicePicker";
+import FlashDialog from "@/components/FlashDialog";
+import NetworkCanvas from "@/components/ui/NetworkCanvas";
 import { SectionLabel } from "@/components/ui/Section";
 import { useLang } from "@/i18n/LanguageProvider";
-import devicesJson from "../../public/firmware/devices.json";
+import { DEVICES, sortedReleases, type Device } from "@/lib/devices";
+import { detectBrowser, type BrowserSupport } from "@/lib/browser";
 
-// ─── Device registry ──────────────────────────────────────────────────────────
-// Supported devices live in public/firmware/devices.json — adding a board only
-// needs its firmware folder plus one entry there.
-
-type FlashDevice = {
-  id: string;
-  name: string;
-  manifest: string;
-};
-
-const DEVICES: FlashDevice[] = devicesJson;
-
-// Group icons — index-matched to flash.capabilities.groups.
-const CAP_ICONS = [
-  // Communication / mesh — broadcast waves
-  <svg key="mesh" viewBox="0 0 24 24" fill="none" className="h-5 w-5">
-    <circle cx="12" cy="12" r="1.6" fill="currentColor" />
-    <path
-      d="M8.5 8.5a5 5 0 000 7M15.5 8.5a5 5 0 010 7M5.5 5.5a9 9 0 000 13M18.5 5.5a9 9 0 010 13"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-  </svg>,
-  // Navigation / time — compass
-  <svg key="nav" viewBox="0 0 24 24" fill="none" className="h-5 w-5">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
-    <path
-      d="M15.5 8.5l-2.2 4.8-4.8 2.2 2.2-4.8 4.8-2.2z"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinejoin="round"
-    />
-  </svg>,
-  // Audio — waveform
-  <svg key="audio" viewBox="0 0 24 24" fill="none" className="h-5 w-5">
-    <path
-      d="M4 10v4M8 6.5v11M12 3.5v17M16 7v10M20 10v4"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-  </svg>,
-  // Connectivity / system — wifi
-  <svg key="wifi" viewBox="0 0 24 24" fill="none" className="h-5 w-5">
-    <path
-      d="M5 12.5a10 10 0 0114 0M8 15.5a6 6 0 018 0"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-    <circle cx="12" cy="19" r="1.1" fill="currentColor" />
-  </svg>,
-];
+const GITHUB_URL = "https://github.com/sichmesh/web-flasher";
 
 export default function FlasherPage() {
   const { t } = useLang();
-  const [selectedId, setSelectedId] = useState<string>(DEVICES[0]?.id ?? "");
-  const [ready, setReady] = useState(false);
-  const [supported, setSupported] = useState(false);
-  const [version, setVersion] = useState<string | null>(null);
+  const [browser, setBrowser] = useState<BrowserSupport | null>(null);
+  const [device, setDevice] = useState<Device | null>(null);
+  const [version, setVersion] = useState("");
+  const [done, setDone] = useState(false);
+  const [picker, setPicker] = useState(false);
+  const [dialog, setDialog] = useState(false);
 
-  const selected: FlashDevice | undefined =
-    DEVICES.find((d) => d.id === selectedId) ?? DEVICES[0];
-  const hasDevices = DEVICES.length > 0;
+  // Browser-only check (the page is prerendered, so it runs after mount)
+  useEffect(() => setBrowser(detectBrowser()), []);
 
-  useEffect(() => {
-    // Browser-only: register the <esp-web-install-button> custom element and
-    // feature-detect Web Serial. Kept out of module scope so SSR/prerender
-    // never touches window/customElements.
-    setSupported(typeof navigator !== "undefined" && "serial" in navigator);
-    import("esp-web-tools").finally(() => setReady(true));
-  }, []);
+  const releases = device ? sortedReleases(device) : [];
+  const release = releases.find((r) => r.version === version) ?? releases[0];
+  const canFlash = !!(device && release && browser?.supported);
+  const active = done ? 3 : device ? (release ? 2 : 1) : 0;
 
-  // Show the firmware version straight from the selected device's manifest, so
-  // it always matches what actually gets flashed (single source of truth).
-  useEffect(() => {
-    let active = true;
-    setVersion(null);
-    if (!selected) return;
-    fetch(selected.manifest)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((m) => {
-        if (active && m && typeof m.version === "string") setVersion(m.version);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, [selected?.manifest]);
+  const pick = (d: Device) => {
+    setDevice(d);
+    setVersion(sortedReleases(d)[0]?.version ?? "");
+    setDone(false);
+    setPicker(false);
+  };
+
+  const cards = [
+    {
+      key: t.steps.device.label,
+      title: t.steps.device.title,
+      desc: t.steps.device.desc,
+      control: device ? (
+        <button
+          type="button"
+          onClick={() => setPicker(true)}
+          className="flex w-full items-center gap-3 rounded-xl border border-gold/35 bg-bg px-3 py-2 text-left transition-colors hover:border-gold/70"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={device.image} alt="" className="h-11 w-auto" />
+          <span>
+            <span className="block text-sm font-semibold text-warm">{device.name}</span>
+            <span className="block font-mono text-[11px] uppercase text-gold">
+              {device.reference ? `${t.picker.reference} · ` : ""}
+              {device.chip}
+            </span>
+          </span>
+        </button>
+      ) : (
+        <button type="button" onClick={() => setPicker(true)} className="btn-flash w-full">
+          {t.steps.device.select}
+        </button>
+      ),
+    },
+    {
+      key: t.steps.firmware.label,
+      title: t.steps.firmware.title,
+      desc: device && !releases.length ? t.steps.firmware.soonDesc : t.steps.firmware.desc,
+      control:
+        device && releases.length ? (
+          <select
+            value={release?.version}
+            onChange={(e) => {
+              setVersion(e.target.value);
+              setDone(false);
+            }}
+            className="w-full appearance-none rounded-xl border border-gold/45 bg-bg bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2212%22%20height=%228%22%3E%3Cpath%20d=%22M1%201l5%205%205-5%22%20stroke=%22%23e6b84a%22%20fill=%22none%22%20stroke-width=%221.6%22/%3E%3C/svg%3E')] bg-[length:12px_8px] bg-[right_14px_center] bg-no-repeat px-4 py-2.5 text-sm text-warm"
+          >
+            {releases.map((r) => (
+              <option key={r.version} value={r.version} className="bg-bg">
+                SICH {r.version} · {t.channel[r.channel]}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <div className="w-full rounded-xl border border-line/50 bg-bg/60 px-4 py-2.5 text-sm text-slate-600">
+            {device ? t.steps.firmware.soon : "—"}
+          </div>
+        ),
+    },
+    {
+      key: t.steps.flash.label,
+      title: t.steps.flash.title,
+      desc: t.steps.flash.desc,
+      control: (
+        <button type="button" disabled={!canFlash} onClick={() => setDialog(true)} className="btn-flash w-full">
+          {device && !releases.length ? t.steps.flash.soon : done ? t.steps.flash.again : t.steps.flash.cta}
+        </button>
+      ),
+    },
+  ];
 
   return (
     <main id="top" className="relative min-h-screen overflow-x-hidden bg-bg">
+      {/* living mesh background, same as sichmesh.org */}
+      <div className="pointer-events-none fixed inset-0">
+        <NetworkCanvas className="h-full w-full opacity-70" interactive={false} density={0.00006} />
+      </div>
+      <div className="pointer-events-none absolute right-[-10%] top-24 h-[520px] w-[520px] rounded-full bg-gold/10 blur-[150px]" />
+
       <Header />
 
-      <section className="relative overflow-hidden px-5 pb-28 pt-32 sm:px-8 sm:pt-36">
-        <div className="absolute inset-0 grid-bg opacity-30" />
-        <div className="pointer-events-none absolute left-1/2 top-24 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-gold/12 blur-[150px]" />
-
-        <div className="relative mx-auto max-w-3xl">
-          {/* Intro */}
-          <div className="text-center">
-            <div className="flex justify-center">
-              <SectionLabel>{t.flash.label}</SectionLabel>
-            </div>
-            <h1 className="mt-6 font-body text-4xl font-bold tracking-tight text-warm sm:text-5xl">
-              <span className="text-gradient">{t.flash.title}</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-dim sm:text-lg">
-              {t.flash.lead}
-            </p>
-          </div>
-
-          {/* Flasher card */}
-          <div className="card-panel mt-12 p-6 sm:p-8">
-            {hasDevices ? (
-              <>
-                {/* Device selector */}
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
-                    {t.flash.deviceLabel}
-                  </p>
-                  {version && (
-                    <span className="rounded-full border border-line/60 bg-panel/40 px-3 py-1 font-mono text-[11px] tracking-wide text-dim">
-                      {t.flash.version} {version}
-                    </span>
-                  )}
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {DEVICES.map((d) => {
-                    const active = d.id === selectedId;
-                    return (
-                      <button
-                        key={d.id}
-                        type="button"
-                        onClick={() => setSelectedId(d.id)}
-                        aria-pressed={active}
-                        className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
-                          active
-                            ? "border-gold/60 bg-gold/10 text-warm"
-                            : "border-line/60 bg-panel/40 text-dim hover:border-gold/40 hover:text-warm"
-                        }`}
-                      >
-                        {d.name}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Flash action */}
-                <div className="mt-8 flex flex-col items-center gap-4 border-t border-line/50 pt-8">
-                  {!ready ? (
-                    <p className="font-mono text-xs uppercase tracking-[0.2em] text-dim">
-                      …
-                    </p>
-                  ) : supported ? (
-                    <esp-web-install-button
-                      key={selected?.id}
-                      manifest={selected?.manifest}
-                    >
-                      <button
-                        slot="activate"
-                        type="button"
-                        className="btn-gold"
-                      >
-                        {t.flash.flashCta}
-                      </button>
-                    </esp-web-install-button>
-                  ) : (
-                    <div className="w-full rounded-2xl border border-coral/30 bg-coral/5 p-5 text-center">
-                      <p className="font-body text-base font-semibold text-coral">
-                        {t.flash.unsupportedTitle}
-                      </p>
-                      <p className="mt-2 text-sm leading-relaxed text-dim">
-                        {t.flash.unsupported}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col items-center py-6 text-center">
-                <span className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
-                  {t.flash.comingSoonBadge}
-                </span>
-                <p className="mt-5 font-body text-xl font-semibold text-warm">
-                  {t.flash.comingSoonTitle}
-                </p>
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-dim">
-                  {t.flash.comingSoon}
-                </p>
-                <a
-                  href="https://discord.gg/zpVgjRxdQJ"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-gold mt-7"
-                >
-                  {t.flash.comingSoonCta}
-                </a>
-              </div>
-            )}
-          </div>
-
-          {/* Steps */}
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            <div className="card-panel p-6">
-              <h2 className="font-body text-lg font-semibold text-warm">
-                {t.flash.stepsTitle}
-              </h2>
-              <ol className="mt-4 space-y-3">
-                {t.flash.steps.map((step, i) => (
-                  <li
-                    key={i}
-                    className="flex gap-3 text-sm leading-relaxed text-dim"
-                  >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 font-mono text-[11px] text-gold">
-                      {i + 1}
-                    </span>
-                    <span>{step}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-
-            {/* Troubleshooting */}
-            <div className="card-panel p-6">
-              <h2 className="font-body text-lg font-semibold text-warm">
-                {t.flash.troubleTitle}
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-dim">
-                {t.flash.trouble}
-              </p>
-            </div>
-          </div>
-
-          {/* ── Firmware capabilities ─────────────────────────────── */}
-          <div className="mt-20">
-            <div className="text-center">
-              <div className="flex justify-center">
-                <SectionLabel>{t.flash.capabilities.label}</SectionLabel>
-              </div>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <h2 className="font-body text-2xl font-bold tracking-tight text-warm sm:text-3xl">
-                  {t.flash.capabilities.title}
-                </h2>
-                {version && (
-                  <span className="rounded-full border border-gold/40 bg-gold/10 px-2.5 py-0.5 font-mono text-[11px] tracking-wide text-gold">
-                    v{version}
+      <section className="relative px-5 pb-16 pt-28 sm:px-8 sm:pt-32">
+        <div className="mx-auto max-w-6xl">
+          {/* Hero */}
+          <div className="grid items-center gap-8 md:grid-cols-[1.25fr_0.75fr]">
+            <div>
+              <SectionLabel>{t.hero.label}</SectionLabel>
+              <h1 className="glow-text mt-5 font-display text-5xl leading-none text-gold sm:text-6xl">{t.hero.title}</h1>
+              <p className="mt-5 max-w-lg text-base leading-relaxed text-dim sm:text-lg">{t.hero.lead}</p>
+              <div className="mt-5 flex flex-wrap gap-2 font-mono text-[11px]">
+                {browser?.supported && (
+                  <span className="rounded-full border border-green/35 px-3 py-1 text-green">
+                    ✓ {browser.name} · {t.hero.ready}
                   </span>
                 )}
+                <span className="rounded-full border border-line/60 px-3 py-1 text-dim">{t.hero.license}</span>
               </div>
-              <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-dim sm:text-base">
-                {t.flash.capabilities.intro}
-              </p>
             </div>
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="relative hidden justify-center md:flex"
+            >
+              <div className="absolute h-64 w-64 rounded-full bg-gold/20 blur-[90px]" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={(device ?? DEVICES[0])?.image}
+                alt="SICH device"
+                className="relative h-[300px] w-auto drop-shadow-[0_24px_32px_rgba(0,0,0,0.6)]"
+                draggable={false}
+              />
+            </motion.div>
+          </div>
 
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              {t.flash.capabilities.groups.map((group, i) => (
-                <div key={i} className="card-panel p-6">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gold/25 bg-gold/5 text-gold">
-                      {CAP_ICONS[i]}
-                    </span>
-                    <h3 className="font-body text-base font-semibold text-warm">
-                      {group.title}
-                    </h3>
-                  </div>
-                  <p className="mt-3 text-sm leading-relaxed text-dim">
-                    {group.intro}
+          {/* Browser without Web Serial */}
+          {browser && !browser.supported && (
+            <div className="mt-8 rounded-2xl border border-coral/40 bg-coral/10 px-5 py-4">
+              <p className="font-semibold text-coral">{t.hero.unsupportedTitle}</p>
+              <p className="mt-1 text-sm leading-relaxed text-slate-300">{t.hero.unsupported}</p>
+            </div>
+          )}
+
+          {/* Steps */}
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {cards.map((c, i) => {
+              const state = i < active ? "done" : i === active ? "active" : "idle";
+              const off = i > 0 && !device;
+              return (
+                <div
+                  key={i}
+                  className={`relative flex min-h-[200px] flex-col rounded-3xl border bg-gradient-to-b from-card/85 to-ink-800/85 p-5 backdrop-blur transition-all duration-300 ${
+                    state === "active"
+                      ? "border-gold/50 shadow-[0_18px_40px_-20px_rgb(var(--gold)/0.45)]"
+                      : "border-white/[0.07]"
+                  } ${off ? "opacity-55" : ""}`}
+                >
+                  <span
+                    className={`absolute right-4 top-2 font-display text-5xl ${
+                      state === "idle" ? "text-white/[0.06]" : "text-gold/15"
+                    }`}
+                  >
+                    0{i + 1}
+                  </span>
+                  <p
+                    className={`font-mono text-[11px] uppercase tracking-[0.22em] ${
+                      state === "idle" ? "text-dim" : "text-gold"
+                    }`}
+                  >
+                    {state === "done" ? "✓" : "●"} {c.key}
                   </p>
-                  <ul className="mt-4 space-y-2.5">
-                    {group.items.map((item, j) => (
-                      <li
-                        key={j}
-                        className="flex gap-2.5 text-sm leading-relaxed text-warm/85"
-                      >
-                        <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-gold/70" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <h2 className="mt-3 text-lg font-semibold text-warm">{c.title}</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-dim">{c.desc}</p>
+                  <div className="mt-auto pt-4">{c.control}</div>
                 </div>
-              ))}
-            </div>
-
-            {/* Experimental note */}
-            <div className="mt-6 flex items-start gap-3 rounded-2xl border border-line/50 bg-panel/30 px-5 py-4">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                aria-hidden
-                className="mt-0.5 h-4 w-4 shrink-0 text-gold"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="9"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                />
-                <path
-                  d="M12 11v5M12 8h.01"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <p className="text-xs leading-relaxed text-dim sm:text-sm">
-                {t.flash.capabilities.note}
-              </p>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-line/50 px-5 py-8 sm:px-8">
-        <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-3 text-xs text-dim sm:flex-row">
-          <a
-            href="https://sichmesh.org"
-            className="font-mono uppercase tracking-[0.18em] transition-colors hover:text-gold"
-          >
-            sichmesh.org
-          </a>
-          <a
-            href="https://github.com/sichmesh/web-flasher"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-colors hover:text-gold"
-          >
-            {t.footer.license}
+      <footer className="relative border-t border-white/[0.06] px-5 py-6 sm:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 font-mono text-[11px] text-slate-600 sm:flex-row">
+          <span>
+            {t.footer.trademark} · {t.footer.license}
+          </span>
+          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="tracking-[0.14em] text-dim hover:text-gold">
+            GITHUB ↗
           </a>
         </div>
       </footer>
+
+      <DevicePicker open={picker} onClose={() => setPicker(false)} onPick={pick} />
+      {device && release && (
+        <FlashDialog
+          open={dialog}
+          device={device}
+          release={release}
+          onClose={() => setDialog(false)}
+          onDone={() => {
+            setDialog(false);
+            setDone(true);
+          }}
+        />
+      )}
     </main>
   );
 }

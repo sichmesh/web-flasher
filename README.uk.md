@@ -26,12 +26,12 @@
 
 ## Про прошивальник
 
-Офіційний веб-прошивальник для [SICH](https://sichmesh.org) — автономного пристрою зв'язку на LoRa mesh-мережі.
+Офіційний веб-прошивальник для [SICH](https://sichmesh.org) — автономної LoRa mesh-мережі.
 
-Підключіть пристрій через USB, оберіть модель і натисніть **Flash**. Браузер запише прошивку прямо на плату через Web Serial API.
+Підключіть пристрій через USB, оберіть його зі списку, виберіть версію і натисніть **Прошити**. Браузер запише прошивку прямо на плату через Web Serial API.
 
 > [!IMPORTANT]
-> Web Serial працює в десктопних **Chrome** та **Edge**. Firefox, Safari і мобільні браузери не підтримуються.
+> Web Serial працює в десктопних **Chrome**, **Edge** та **Opera**. Firefox, Safari і мобільні браузери не підтримуються.
 
 ## Підтримувані пристрої
 
@@ -40,57 +40,62 @@
 
 | Пристрій | Чип | Прошивка |
 |---|---|---|
-| SICH — ESP32-S3 (N16R8) | ESP32-S3 | Незабаром |
+| SICH S3 (референсний) | ESP32-S3 | Незабаром |
 
 ## Як додати пристрій
 
-Виробники плат можуть додати своє залізо. Пристрій — це лише папка з файлами прошивки і один рядок у JSON-файлі, без змін у коді.
+Виробники плат можуть додати своє залізо. Пристрій — це картинка, папка з прошивкою і один запис у JSON-файлі, без змін у коді.
 
-**1. Додайте прошивку** в `public/firmware/<device-id>/`:
+**1. Додайте прошивку** в `public/firmware/<device-id>/<version>/`:
 
 ```
-public/firmware/<device-id>/
+public/firmware/<device-id>/<version>/
 ├─ manifest.json
-├─ bootloader.bin
-├─ partitions.bin
-├─ boot_app0.bin
-└─ firmware.bin
+└─ firmware.factory.bin      (або bootloader.bin, partitions.bin, firmware.bin, …)
 ```
 
-`manifest.json` у [форматі esp-web-tools](https://esphome.github.io/esp-web-tools/):
+`manifest.json` у [форматі esp-web-tools](https://esphome.github.io/esp-web-tools/). Шляхи до файлів вказуються відносно маніфесту:
 
 ```json
 {
-  "name": "SICH Firmware",
-  "version": "1.0.0",
-  "new_install_prompt_erase": true,
+  "name": "SICH",
+  "version": "2.0.0",
   "builds": [
     {
       "chipFamily": "ESP32-S3",
-      "parts": [
-        { "path": "bootloader.bin", "offset": 0 },
-        { "path": "partitions.bin", "offset": 32768 },
-        { "path": "boot_app0.bin", "offset": 57344 },
-        { "path": "firmware.bin", "offset": 65536 }
-      ]
+      "parts": [{ "path": "firmware.factory.bin", "offset": 0 }]
     }
   ]
 }
 ```
 
-**2. Зареєструйте пристрій** у `public/firmware/devices.json`:
+**2. Додайте зображення** пристрою в `public/devices/<device-id>.webp` (прозорий фон, приблизно 600×1400).
+
+**3. Зареєструйте пристрій** у `public/firmware/devices.json`:
 
 ```json
-[
-  { "id": "<device-id>", "name": "<Vendor> — <Board>", "manifest": "/firmware/<device-id>/manifest.json" }
-]
+{
+  "id": "<device-id>",
+  "name": "<Назва плати>",
+  "vendor": "<Ваша компанія>",
+  "chip": "esp32-s3",
+  "image": "/devices/<device-id>.webp",
+  "specs": { "en": "LoRa 868 · GPS", "ua": "LoRa 868 · GPS" },
+  "releases": [
+    {
+      "version": "2.0.0",
+      "channel": "stable",
+      "manifest": "/firmware/<device-id>/2.0.0/manifest.json",
+      "notes": { "en": ["What changed, in a few short lines"], "ua": ["Що змінилося, кількома рядками"] },
+      "changelog": "https://github.com/…/releases/tag/v2.0.0"
+    }
+  ]
+}
 ```
 
-Поки список порожній, сторінка показує заглушку «Незабаром».
+`channel` — це `stable` або `beta`. За замовчуванням обирається найновіший стабільний реліз. Пристрій без релізів показує «Незабаром».
 
-**3. Відкрийте pull request.** Після злиття пристрій з'явиться на [flasher.sichmesh.org](https://flasher.sichmesh.org).
-
-Версія на сторінці береться з `manifest.json` кожного пристрою, тож завжди збігається з тим, що буде прошито.
+**4. Відкрийте pull request.** Після злиття пристрій з'явиться на [flasher.sichmesh.org](https://flasher.sichmesh.org).
 
 ## Як це працює
 
@@ -99,11 +104,13 @@ flowchart LR
     U([Користувач]) --> F["flasher.sichmesh.org"]
     F --> J["devices.json"]
     J --> M["manifest.json"]
-    M --> B["bootloader · partitions<br/>boot_app0 · firmware"]
-    F --> W["esp-web-tools"]
-    B --> W
-    W -- "Web Serial · USB" --> D[["Пристрій SICH"]]
+    M --> B["файли прошивки"]
+    F --> E["esptool-js"]
+    B --> E
+    E -- "Web Serial · USB" --> D[["Пристрій"]]
 ```
+
+Під час відкриття сторінка перевіряє, чи браузер підтримує Web Serial. Прошиває [esptool-js](https://github.com/espressif/esptool-js) — офіційний JavaScript-порт esptool від Espressif, який також перевіряє кожен записаний образ.
 
 ## Розробка
 

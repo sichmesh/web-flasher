@@ -26,12 +26,12 @@
 
 ## About
 
-The official web flasher for [SICH](https://sichmesh.org), an off-grid LoRa mesh communication device.
+The official web flasher for [SICH](https://sichmesh.org), an off-grid LoRa mesh network.
 
-Plug the device in over USB, pick the model and click **Flash**. The browser writes the firmware straight to the board using the Web Serial API.
+Plug the device in over USB, pick it from the list, choose a version and click **Flash**. The browser writes the firmware straight to the board using the Web Serial API.
 
 > [!IMPORTANT]
-> Web Serial works in desktop **Chrome** and **Edge**. Firefox, Safari and mobile browsers are not supported.
+> Web Serial works in desktop **Chrome**, **Edge** and **Opera**. Firefox, Safari and mobile browsers are not supported.
 
 ## Supported devices
 
@@ -40,57 +40,62 @@ Plug the device in over USB, pick the model and click **Flash**. The browser wri
 
 | Device | Chip | Firmware |
 |---|---|---|
-| SICH — ESP32-S3 (N16R8) | ESP32-S3 | Coming soon |
+| SICH S3 (reference) | ESP32-S3 | Coming soon |
 
 ## Adding a device
 
-Board makers are welcome to add their hardware. A device is just a folder with firmware images and one entry in a JSON file — no code changes.
+Board makers are welcome to add their hardware. A device is an image, a folder with firmware and one entry in a JSON file, with no code changes.
 
-**1. Add the firmware** to `public/firmware/<device-id>/`:
+**1. Add the firmware** to `public/firmware/<device-id>/<version>/`:
 
 ```
-public/firmware/<device-id>/
+public/firmware/<device-id>/<version>/
 ├─ manifest.json
-├─ bootloader.bin
-├─ partitions.bin
-├─ boot_app0.bin
-└─ firmware.bin
+└─ firmware.factory.bin      (or bootloader.bin, partitions.bin, firmware.bin, …)
 ```
 
-`manifest.json` follows the [esp-web-tools manifest format](https://esphome.github.io/esp-web-tools/):
+`manifest.json` follows the [esp-web-tools manifest format](https://esphome.github.io/esp-web-tools/). Part paths are relative to the manifest:
 
 ```json
 {
-  "name": "SICH Firmware",
-  "version": "1.0.0",
-  "new_install_prompt_erase": true,
+  "name": "SICH",
+  "version": "2.0.0",
   "builds": [
     {
       "chipFamily": "ESP32-S3",
-      "parts": [
-        { "path": "bootloader.bin", "offset": 0 },
-        { "path": "partitions.bin", "offset": 32768 },
-        { "path": "boot_app0.bin", "offset": 57344 },
-        { "path": "firmware.bin", "offset": 65536 }
-      ]
+      "parts": [{ "path": "firmware.factory.bin", "offset": 0 }]
     }
   ]
 }
 ```
 
-**2. Register the device** in `public/firmware/devices.json`:
+**2. Add a picture** of the device to `public/devices/<device-id>.webp` (transparent background, about 600×1400).
+
+**3. Register the device** in `public/firmware/devices.json`:
 
 ```json
-[
-  { "id": "<device-id>", "name": "<Vendor> — <Board>", "manifest": "/firmware/<device-id>/manifest.json" }
-]
+{
+  "id": "<device-id>",
+  "name": "<Board name>",
+  "vendor": "<Your company>",
+  "chip": "esp32-s3",
+  "image": "/devices/<device-id>.webp",
+  "specs": { "en": "LoRa 868 · GPS", "ua": "LoRa 868 · GPS" },
+  "releases": [
+    {
+      "version": "2.0.0",
+      "channel": "stable",
+      "manifest": "/firmware/<device-id>/2.0.0/manifest.json",
+      "notes": { "en": ["What changed, in a few short lines"], "ua": ["Що змінилося, кількома рядками"] },
+      "changelog": "https://github.com/…/releases/tag/v2.0.0"
+    }
+  ]
+}
 ```
 
-While the list is empty, the page shows the "Coming soon" placeholder.
+`channel` is `stable` or `beta`. The newest stable release is selected by default. A device with no releases yet shows "Coming soon".
 
-**3. Open a pull request.** Once merged, the device appears on [flasher.sichmesh.org](https://flasher.sichmesh.org).
-
-The version badge on the page is read from each device's `manifest.json`, so it always matches what gets flashed.
+**4. Open a pull request.** Once merged, the device appears on [flasher.sichmesh.org](https://flasher.sichmesh.org).
 
 ## How it works
 
@@ -99,11 +104,13 @@ flowchart LR
     U([User]) --> F["flasher.sichmesh.org"]
     F --> J["devices.json"]
     J --> M["manifest.json"]
-    M --> B["bootloader · partitions<br/>boot_app0 · firmware"]
-    F --> W["esp-web-tools"]
-    B --> W
-    W -- "Web Serial · USB" --> D[["SICH device"]]
+    M --> B["firmware images"]
+    F --> E["esptool-js"]
+    B --> E
+    E -- "Web Serial · USB" --> D[["Device"]]
 ```
+
+The page checks for Web Serial when it opens. Flashing is done by [esptool-js](https://github.com/espressif/esptool-js), Espressif's own JavaScript port of esptool, which also verifies every written image.
 
 ## Development
 

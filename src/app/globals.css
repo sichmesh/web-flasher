@@ -73,6 +73,24 @@
     border-color: rgb(var(--gold) / 0.55);
     color: rgb(var(--gold));
   }
+  /* Flasher primary action: full-width gold */
+  .btn-flash {
+    @apply flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold text-bg transition-all duration-200;
+    background: linear-gradient(180deg, #f0c860, #d9a73a);
+    box-shadow: 0 8px 24px -10px rgb(var(--gold) / 0.8);
+  }
+  .btn-flash:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+  .btn-flash:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+  .btn-flash:disabled {
+    @apply cursor-not-allowed;
+    background: rgb(var(--panel) / 0.8);
+    color: rgb(var(--dim-600));
+    box-shadow: none;
+  }
   /* Card surface: thin line border + soft shadow */
   .card-panel {
     @apply rounded-2xl border border-line bg-card;
