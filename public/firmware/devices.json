@@ -12,6 +12,21 @@
     },
     "releases": [
       {
+        "version": "2.0.0-beta.7",
+        "channel": "beta",
+        "manifest": "/firmware/sich-s3/2.0.0-beta.7/manifest.json",
+        "notes": {
+          "en": [
+            "ORLYK: add a code with the keypad",
+            "(arrows choose, Enter adds)"
+          ],
+          "ua": [
+            "ОРЛИК: код додається з клавіш",
+            "(стрілки - вибір, Enter - додати)"
+          ]
+        }
+      },
+      {
         "version": "2.0.0-beta.6",
         "channel": "beta",
         "manifest": "/firmware/sich-s3/2.0.0-beta.6/manifest.json",

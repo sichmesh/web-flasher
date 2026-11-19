@@ -1,16 +1,16 @@
 {
   "variant": "s3",
-  "version": "2.0.0-beta.6",
-  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.6/sich-s3-2.0.0-beta.6.sfw",
-  "size": 2657408,
+  "version": "2.0.0-beta.7",
+  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.7/sich-s3-2.0.0-beta.7.sfw",
+  "size": 2657488,
   "notes": {
     "en": [
-      "Test of the online update",
-      "Nothing else changed"
+      "ORLYK: add a code with the keypad",
+      "(arrows choose, Enter adds)"
     ],
     "uk": [
-      "Перевірка онлайн-оновлення",
-      "Більше нічого не змінено"
+      "ОРЛИК: код додається з клавіш",
+      "(стрілки - вибір, Enter - додати)"
     ]
   }
 }
