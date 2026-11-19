@@ -12,6 +12,21 @@
     },
     "releases": [
       {
+        "version": "2.0.0-beta.3",
+        "channel": "beta",
+        "manifest": "/firmware/sich-s3/2.0.0-beta.3/manifest.json",
+        "notes": {
+          "en": [
+            "TLS buffers moved to PSRAM",
+            "Update errors show their reason"
+          ],
+          "ua": [
+            "Буфери TLS перенесено в PSRAM",
+            "Причина помилки оновлення на екрані"
+          ]
+        }
+      },
+      {
         "version": "2.0.0-beta.2",
         "channel": "beta",
         "manifest": "/firmware/sich-s3/2.0.0-beta.2/manifest.json",

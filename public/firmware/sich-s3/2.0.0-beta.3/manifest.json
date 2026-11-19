@@ -1,0 +1,36 @@
+{
+  "name": "SICH S3",
+  "version": "2.0.0-beta.3",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "bootloader.bin",
+          "offset": 0
+        },
+        {
+          "path": "partitions.bin",
+          "offset": 32768
+        },
+        {
+          "path": "boot_app0.bin",
+          "offset": 57344
+        },
+        {
+          "path": "firmware.bin",
+          "offset": 65536
+        },
+        {
+          "path": "sich-web-flash.bin",
+          "offset": 8519680
+        },
+        {
+          "path": "vendors.bin",
+          "offset": 9568256
+        }
+      ]
+    }
+  ]
+}

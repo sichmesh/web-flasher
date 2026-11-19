@@ -1,16 +1,16 @@
 {
   "variant": "s3",
-  "version": "2.0.0-beta.2",
-  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.2/sich-s3-2.0.0-beta.2.sfw",
-  "size": 2656928,
+  "version": "2.0.0-beta.3",
+  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.3/sich-s3-2.0.0-beta.3.sfw",
+  "size": 2657408,
   "notes": {
     "en": [
-      "Test of the online update",
-      "Nothing else changed"
+      "TLS buffers moved to PSRAM",
+      "Update errors show their reason"
     ],
     "uk": [
-      "Перевірка онлайн-оновлення",
-      "Більше нічого не змінено"
+      "Буфери TLS перенесено в PSRAM",
+      "Причина помилки оновлення на екрані"
     ]
   }
 }
