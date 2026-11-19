@@ -12,6 +12,36 @@
     },
     "releases": [
       {
+        "version": "2.0.0-beta.6",
+        "channel": "beta",
+        "manifest": "/firmware/sich-s3/2.0.0-beta.6/manifest.json",
+        "notes": {
+          "en": [
+            "Test of the online update",
+            "Nothing else changed"
+          ],
+          "ua": [
+            "Перевірка онлайн-оновлення",
+            "Більше нічого не змінено"
+          ]
+        }
+      },
+      {
+        "version": "2.0.0-beta.5",
+        "channel": "beta",
+        "manifest": "/firmware/sich-s3/2.0.0-beta.5/manifest.json",
+        "notes": {
+          "en": [
+            "Online updates now install on S3",
+            "(the chip check was the P4's)"
+          ],
+          "ua": [
+            "Онлайн-оновлення ставляться на S3",
+            "(перевірка чипа була від P4)"
+          ]
+        }
+      },
+      {
         "version": "2.0.0-beta.4",
         "channel": "beta",
         "manifest": "/firmware/sich-s3/2.0.0-beta.4/manifest.json",
