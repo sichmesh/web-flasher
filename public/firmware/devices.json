@@ -12,6 +12,21 @@
     },
     "releases": [
       {
+        "version": "2.0.0-beta.4",
+        "channel": "beta",
+        "manifest": "/firmware/sich-s3/2.0.0-beta.4/manifest.json",
+        "notes": {
+          "en": [
+            "Test of the online update",
+            "Nothing else changed"
+          ],
+          "ua": [
+            "Перевірка онлайн-оновлення",
+            "Більше нічого не змінено"
+          ]
+        }
+      },
+      {
         "version": "2.0.0-beta.3",
         "channel": "beta",
         "manifest": "/firmware/sich-s3/2.0.0-beta.3/manifest.json",
