@@ -1,0 +1,20 @@
+{
+  "variant": "s3",
+  "version": "2.0.0-beta.1",
+  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.1/sich-s3-2.0.0-beta.1.sfw",
+  "size": 2656928,
+  "notes": {
+    "en": [
+      "First public SICH S3 beta",
+      "LoRa mesh chat, voice, SOS, map",
+      "ORLYK: via Wi-Fi or the phone app",
+      "Online firmware updates"
+    ],
+    "uk": [
+      "Перша публічна бета SICH S3",
+      "Mesh-чат LoRa, голос, SOS, мапа",
+      "ORLYK: через Wi-Fi або додаток",
+      "Онлайн-оновлення прошивки"
+    ]
+  }
+}

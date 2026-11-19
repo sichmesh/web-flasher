@@ -10,6 +10,26 @@
       "en": "LoRa 433 + 868 · GPS · keyboard",
       "ua": "LoRa 433 + 868 · GPS · клавіатура"
     },
-    "releases": []
+    "releases": [
+      {
+        "version": "2.0.0-beta.1",
+        "channel": "beta",
+        "manifest": "/firmware/sich-s3/2.0.0-beta.1/manifest.json",
+        "notes": {
+          "en": [
+            "First public SICH S3 beta",
+            "LoRa mesh chat, voice, SOS, map",
+            "ORLYK: via Wi-Fi or the phone app",
+            "Online firmware updates"
+          ],
+          "ua": [
+            "Перша публічна бета SICH S3",
+            "Mesh-чат LoRa, голос, SOS, мапа",
+            "ORLYK: через Wi-Fi або додаток",
+            "Онлайн-оновлення прошивки"
+          ]
+        }
+      }
+    ]
   }
 ]
