@@ -1,16 +1,18 @@
 {
   "variant": "s3",
-  "version": "2.0.0-beta.10",
-  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.10/sich-s3-2.0.0-beta.10.sfw",
-  "size": 2658128,
+  "version": "2.0.0-beta.11",
+  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.11/sich-s3-2.0.0-beta.11.sfw",
+  "size": 2662272,
   "notes": {
     "en": [
-      "Fixed restarts without an SD card",
-      "(ORLYK contact, chat history)"
+      "GPS: module set up at start (+GLONASS)",
+      "GPS: orbits saved, faster next fix",
+      "GPS: no lost bytes on a busy CPU"
     ],
     "uk": [
-      "Без SD-карти більше не перезапускається",
-      "(контакт ОРЛИКА, історія чату)"
+      "GPS: налаштування модуля (+ГЛОНАСС)",
+      "GPS: орбіти зберігаються, фікс швидше",
+      "GPS: без втрат байтів у лінії"
     ]
   }
 }
