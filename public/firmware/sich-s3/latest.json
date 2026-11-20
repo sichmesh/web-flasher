@@ -1,16 +1,14 @@
 {
   "variant": "s3",
-  "version": "2.0.0-beta.7",
-  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.7/sich-s3-2.0.0-beta.7.sfw",
-  "size": 2657488,
+  "version": "2.0.0-beta.8",
+  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.8/sich-s3-2.0.0-beta.8.sfw",
+  "size": 2657744,
   "notes": {
     "en": [
-      "ORLYK: add a code with the keypad",
-      "(arrows choose, Enter adds)"
+      "ORLYK: a refused code says why"
     ],
     "uk": [
-      "ОРЛИК: код додається з клавіш",
-      "(стрілки - вибір, Enter - додати)"
+      "ОРЛИК: видно, чому код не прийнято"
     ]
   }
 }
