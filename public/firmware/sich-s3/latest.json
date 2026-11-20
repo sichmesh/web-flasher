@@ -1,14 +1,16 @@
 {
   "variant": "s3",
-  "version": "2.0.0-beta.8",
-  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.8/sich-s3-2.0.0-beta.8.sfw",
-  "size": 2657744,
+  "version": "2.0.0-beta.9",
+  "url": "https://flasher.sichmesh.org/firmware/sich-s3/2.0.0-beta.9/sich-s3-2.0.0-beta.9.sfw",
+  "size": 2657760,
   "notes": {
     "en": [
-      "ORLYK: a refused code says why"
+      "ORLYK: adding a contact works",
+      "(hardware AES and empty frames)"
     ],
     "uk": [
-      "ОРЛИК: видно, чому код не прийнято"
+      "ОРЛИК: контакт додається",
+      "(апаратний AES і порожні кадри)"
     ]
   }
 }
