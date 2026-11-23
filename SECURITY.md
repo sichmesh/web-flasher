@@ -16,7 +16,7 @@ Only the maintainers can see the report. We will confirm that we received it, ke
 
 This policy covers the SICH Web Flasher (flasher.sichmesh.org) and the firmware files it serves.
 
-Security issues in SICH devices or firmware should be reported in the same way. If you are unsure where an issue belongs, report it here and we will route it.
+Security issues in the SICH firmware or its radio protocol: report them in [sich-firmware](https://github.com/sichmesh/sich-firmware/security). If you are unsure where an issue belongs, report it here and we will route it.
 
 ## Supported versions
 

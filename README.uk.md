@@ -36,11 +36,11 @@
 ## Підтримувані пристрої
 
 > [!NOTE]
-> Перший публічний реліз прошивки SICH — незабаром. До того часу прошивальник показує заглушку. Анонс буде в [Discord](https://discord.gg/zpVgjRxdQJ).
+> Прошивка SICH — у бета-версії. Її код: [sichmesh/sich-firmware](https://github.com/sichmesh/sich-firmware). Новини релізів: [Discord](https://discord.gg/zpVgjRxdQJ).
 
 | Пристрій | Чип | Прошивка |
 |---|---|---|
-| SICH S3 (референсний) | ESP32-S3 | Незабаром |
+| SICH S3 (референсний) | ESP32-S3 | Бета |
 
 ## Як додати пристрій
 
@@ -130,6 +130,9 @@ npm run build      # статичний сайт у ./out
 
 ## Пов'язані репозиторії
 
+- [sich-firmware](https://github.com/sichmesh/sich-firmware) — прошивка SICH і її радіопротокол
+- [sich-mesh-android](https://github.com/sichmesh/sich-mesh-android) — застосунок SICH Mesh для Android
+- [sich-relay](https://github.com/sichmesh/sich-relay) — ретранслятор для ОРЛИКА, анонімного чату через інтернет
 - [sichmesh](https://github.com/sichmesh/sichmesh) — сайт SICH
 
 ## Ліцензія

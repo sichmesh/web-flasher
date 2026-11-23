@@ -36,11 +36,11 @@ Plug the device in over USB, pick it from the list, choose a version and click *
 ## Supported devices
 
 > [!NOTE]
-> The first public SICH firmware release is coming soon. Until then the flasher shows a placeholder. Follow [Discord](https://discord.gg/zpVgjRxdQJ) for the announcement.
+> SICH firmware is in beta. Its source code: [sichmesh/sich-firmware](https://github.com/sichmesh/sich-firmware). Release news: [Discord](https://discord.gg/zpVgjRxdQJ).
 
 | Device | Chip | Firmware |
 |---|---|---|
-| SICH S3 (reference) | ESP32-S3 | Coming soon |
+| SICH S3 (reference) | ESP32-S3 | Beta |
 
 ## Adding a device
 
@@ -130,6 +130,9 @@ The site is fully static. Every push to `main` builds it with GitHub Actions and
 
 ## Related
 
+- [sich-firmware](https://github.com/sichmesh/sich-firmware) — the SICH firmware and its radio protocol
+- [sich-mesh-android](https://github.com/sichmesh/sich-mesh-android) — the SICH Mesh app for Android
+- [sich-relay](https://github.com/sichmesh/sich-relay) — the relay for ORLYK, the anonymous chat over the internet
 - [sichmesh](https://github.com/sichmesh/sichmesh) — SICH website
 
 ## License

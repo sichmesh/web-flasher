@@ -75,6 +75,34 @@ export const translations = {
       hideLog: "hide log",
       close: "Close",
     },
+    app: {
+      label: "The App",
+      title: "SICH on your phone",
+      lead: "SICH Mesh is your device's screen on the phone, over Bluetooth: chats, nodes, the map, ORLYK and network settings. Keys and messages stay on the device.",
+      android: {
+        name: "Android",
+        meta: "Android 8.0+",
+        cta: "Download APK",
+        note: "The app is not in Google Play yet, so Android asks for your permission before installing it.",
+      },
+      ios: {
+        name: "iPhone",
+        meta: "iOS",
+        cta: "Coming soon",
+        note: "The iPhone app is in the works.",
+      },
+      install: {
+        title: "How to install",
+        steps: [
+          "Tap Download APK and open the downloaded file.",
+          "Android says your browser is not allowed to install apps. Tap Settings, turn on Allow from this source and go back.",
+          "If Google Play Protect says it does not know the app, tap More details, then Install anyway.",
+          "Open SICH Mesh and pair it with your device: the 6-digit code is shown on the device screen.",
+        ],
+        hint: "Button names can differ a little from phone to phone.",
+        fingerprint: "Signing key fingerprint (SHA-256)",
+      },
+    },
     footer: {
       trademark: "SICH™ is a trademark of BFU Electronics LTD",
       license: "Open source under GPL-3.0",
@@ -153,6 +181,34 @@ export const translations = {
       showLog: "показати лог",
       hideLog: "сховати лог",
       close: "Закрити",
+    },
+    app: {
+      label: "Застосунок",
+      title: "SICH у вашому телефоні",
+      lead: "SICH Mesh — екран вашого пристрою на телефоні через Bluetooth: чати, вузли, мапа, ОРЛИК і налаштування мережі. Ключі й повідомлення залишаються на пристрої.",
+      android: {
+        name: "Android",
+        meta: "Android 8.0+",
+        cta: "Завантажити APK",
+        note: "Застосунку поки немає в Google Play, тому перед встановленням Android попросить ваш дозвіл.",
+      },
+      ios: {
+        name: "iPhone",
+        meta: "iOS",
+        cta: "Скоро",
+        note: "Застосунок для iPhone у роботі.",
+      },
+      install: {
+        title: "Як встановити",
+        steps: [
+          "Натисніть «Завантажити APK» і відкрийте завантажений файл.",
+          "Android повідомить, що браузеру не дозволено встановлювати застосунки. Натисніть «Налаштування», увімкніть «Дозволити з цього джерела» і поверніться назад.",
+          "Якщо Google Play Protect скаже, що не знає цього застосунку, натисніть «Докладніше», а потім «Усе одно встановити».",
+          "Відкрийте SICH Mesh і з'єднайте його з пристроєм: 6-значний код показано на екрані пристрою.",
+        ],
+        hint: "Назви кнопок можуть трохи відрізнятися залежно від телефону.",
+        fingerprint: "Відбиток ключа підпису (SHA-256)",
+      },
     },
     footer: {
       trademark: "SICH™ — торговельна марка BFU Electronics LTD",

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import DevicePicker from "@/components/DevicePicker";
 import FlashDialog from "@/components/FlashDialog";
+import AppCards from "@/components/AppCards";
 import NetworkCanvas from "@/components/ui/NetworkCanvas";
 import { SectionLabel } from "@/components/ui/Section";
 import { useLang } from "@/i18n/LanguageProvider";
@@ -187,6 +188,16 @@ export default function FlasherPage() {
                 </div>
               );
             })}
+          </div>
+
+          {/* The phone app */}
+          <div id="app" className="mt-16 scroll-mt-28">
+            <SectionLabel>{t.app.label}</SectionLabel>
+            <h2 className="mt-4 text-2xl font-semibold text-warm sm:text-3xl">{t.app.title}</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-dim sm:text-base">{t.app.lead}</p>
+            <div className="mt-6 max-w-4xl">
+              <AppCards text={t.app} />
+            </div>
           </div>
         </div>
       </section>
