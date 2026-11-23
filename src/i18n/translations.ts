@@ -83,7 +83,8 @@ export const translations = {
         name: "Android",
         meta: "Android 8.0+",
         cta: "Download APK",
-        note: "The app is not in Google Play yet, so Android asks for your permission before installing it.",
+        badge: "Beta",
+        note: "The Android app is in development and beta testing, so it is not on Google Play yet. You can get early access today: download the APK. Android will ask for your permission before installing it.",
       },
       ios: {
         name: "iPhone",
@@ -190,7 +191,8 @@ export const translations = {
         name: "Android",
         meta: "Android 8.0+",
         cta: "Завантажити APK",
-        note: "Застосунку поки немає в Google Play, тому перед встановленням Android попросить ваш дозвіл.",
+        badge: "Бета",
+        note: "Застосунок для Android у розробці й бета-тестуванні, тому в Google Play його поки немає. Але ранній доступ можна отримати вже сьогодні: завантажте APK. Перед встановленням Android попросить ваш дозвіл.",
       },
       ios: {
         name: "iPhone",

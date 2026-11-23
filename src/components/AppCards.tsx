@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { APP } from "@/lib/app";
 
 export type AppText = {
-  android: { name: string; meta: string; cta: string; note: string };
+  android: { name: string; badge: string; meta: string; cta: string; note: string };
   ios: { name: string; meta: string; cta: string; note: string };
   install: { title: string; steps: string[]; hint: string; fingerprint: string };
 };
@@ -61,7 +61,12 @@ export default function AppCards({ text }: { text: AppText }) {
             <PhoneDownload className="h-8 w-8" />
           </div>
           <div>
-            <p className="text-xl font-semibold text-warm">{text.android.name}</p>
+            <p className="flex items-center gap-2 text-xl font-semibold text-warm">
+              {text.android.name}
+              <span className="rounded-full border border-gold/45 bg-gold/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-gold">
+                {text.android.badge}
+              </span>
+            </p>
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-dim">
               SICH Mesh {APP.version} · {text.android.meta}
             </p>
